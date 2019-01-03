@@ -284,7 +284,9 @@ class InstaBot:
         })
 
         r = self.s.get(self.url)
-        self.s.headers.update({'X-CSRFToken': r.cookies['csrftoken']})
+        #self.s.headers.update({'X-CSRFToken': r.cookies['csrftoken']})
+        csrf_token = re.search('(?<=\"csrf_token\":\")\w+', r.text).group(0)
+        self.s.headers.update({'X-CSRFToken': csrf_token})
         time.sleep(5 * random.random())
         login = self.s.post(
             self.url_login, data=self.login_post, allow_redirects=True)
@@ -642,8 +644,9 @@ class InstaBot:
                     log_string = "Followed: %s #%i." % (user_id,
                                                         self.follow_counter)
                     self.write_log(log_string)
-                    username = self.get_username_by_user_id(user_id=user_id)
-                    insert_username(self, user_id=user_id, username=username)
+                    #username = self.get_username_by_user_id(user_id=user_id)
+                    #insert_username(self, user_id=user_id, username=username)
+                    insert_username(self, user_id=user_id, username=user_id)
                 return follow
             except:
                 logging.exception("Except on follow!")
@@ -818,7 +821,8 @@ class InstaBot:
         res = " ".join(random.choice(c_list))
         for s, r in repl:
             res = res.replace(s, r)
-        return res.capitalize()
+        #return res.capitalize()
+        return res # do not change capital letters
 
     def check_exisiting_comment(self, media_code):
         url_check = self.url_media_detail % (media_code)
